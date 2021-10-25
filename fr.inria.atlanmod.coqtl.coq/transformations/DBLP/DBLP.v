@@ -1174,15 +1174,15 @@ Instance DBLPMetamodel_EqDec : EqDec DBLPMetamodel_Object := {
     eq_b := beq_DBLPMetamodel_Object;
 }.
 
-Instance DBLPMetamodel_Metamodel_instance : 
+Instance DBLPMetamodel_Metamodel_Instance : 
 	Metamodel :=
 {
 	ModelElement := DBLPMetamodel_Object;
 	ModelLink := DBLPMetamodel_Link;
 }.
 
-Instance DBLPMetamodel_ModelingMetamodel_instance : 
-	ModelingMetamodel DBLPMetamodel_Metamodel_instance :=
+Instance DBLPMetamodel_ModelingMetamodel_Instance : 
+	ModelingMetamodel DBLPMetamodel_Metamodel_Instance :=
 { 
     elements := DBLPMetamodel_ElementSum;
     links := DBLPMetamodel_LinkSum; 

@@ -501,15 +501,15 @@ Instance moviesMetamodel_EqDec : EqDec moviesMetamodel_Object := {
     eq_b := beq_moviesMetamodel_Object;
 }.
 
-Instance moviesMetamodel_Metamodel_instance : 
+Instance moviesMetamodel_Metamodel_Instance : 
 	Metamodel :=
 {
 	ModelElement := moviesMetamodel_Object;
 	ModelLink := moviesMetamodel_Link;
 }.
 
-Instance moviesMetamodel_ModelingMetamodel_instance : 
-	ModelingMetamodel moviesMetamodel_Metamodel_instance :=
+Instance moviesMetamodel_ModelingMetamodel_Instance : 
+	ModelingMetamodel moviesMetamodel_Metamodel_Instance :=
 { 
     elements := moviesMetamodel_ElementSum;
     links := moviesMetamodel_LinkSum; 
