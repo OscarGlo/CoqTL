@@ -2,9 +2,6 @@ Require Import String.
 Require Import List.
 Require Import Multiset.
 Require Import ListSet.
-Require Import Omega.
-
-Require Import Coq.Strings.Ascii.
 
 Require Import core.utils.Utils.
 
@@ -21,12 +18,11 @@ Require Import core.TransformationConfiguration.
 Require Import core.modeling.ModelingTransformationConfiguration.
 
 Open Scope coqtl.
-
 Instance R2AConfiguration : TransformationConfiguration := 
   Build_TransformationConfiguration RSSMetamodel_Metamodel_instance ATOMMetamodel_Metamodel_instance.
 
 Instance RSS2ATOMConfiguration : ModelingTransformationConfiguration R2AConfiguration :=
-  Build_ModelingTransformationConfiguration R2AConfiguration RSSMetamodel_ModelingMetamodel_instance ATOMMetamodel_ModelingMetamodel_instance.
+ Build_ModelingTransformationConfiguration R2AConfiguration RSSMetamodel_ModelingMetamodel_instance ATOMMetamodel_ModelingMetamodel_instance.
 
 Check elem.
 
@@ -97,3 +93,5 @@ Definition RSS2ATOM :=
       nil
     ]
   ].
+
+Close Scope coqtl.

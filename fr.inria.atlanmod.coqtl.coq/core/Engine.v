@@ -227,3 +227,122 @@ Class TransformationEngine (tc: TransformationConfiguration) (ts: Transformation
          (TraceLink_getTargetElement tl) = x);
          
   }.
+
+Theorem tr_execute_rule_in :
+      forall (tc: TransformationConfiguration) (ts: TransformationSyntax tc) (eng: TransformationEngine ts) 
+      (tr: Transformation) (sm : SourceModel) (te : TargetModelElement),
+      In te (allModelElements (execute tr sm)) <->
+      (exists (sp : list SourceModelElement) (r : Rule),
+          In sp (allTuples tr sm) /\
+          In r (Transformation_getRules tr) /\
+          matchRuleOnPattern r sm sp = true /\
+          In te (instantiateRuleOnPattern r sm sp)).
+Proof.
+  intros.
+  rewrite tr_execute_in_elements. 
+  split.
+  * intros. repeat destruct H. 
+    apply tr_instantiatePattern_in in H0.
+    repeat destruct H0. 
+    apply tr_matchPattern_in in H0.
+    exists x, x0.
+    crush.
+  * intros. repeat destruct H. destruct H0, H1.
+    exists x.
+    crush.
+    apply tr_instantiatePattern_in.
+    exists x0.
+    crush.
+    apply tr_matchPattern_in.
+    crush.
+Qed.
+
+Theorem tr_execute_iteration_in :
+      forall (tc: TransformationConfiguration) (ts: TransformationSyntax tc) (eng: TransformationEngine ts) 
+      (tr: Transformation) (sm : SourceModel) (te : TargetModelElement),
+      In te (allModelElements (execute tr sm)) <->
+      (exists (sp : list SourceModelElement) (r : Rule) (i: nat),
+          In sp (allTuples tr sm) /\
+          In r (Transformation_getRules tr) /\
+          matchRuleOnPattern r sm sp = true /\
+          In i (seq 0 (evalIteratorExpr r sm sp)) /\
+          In te (instantiateIterationOnPattern r sm sp i)).
+Proof.
+  intros.
+  rewrite tr_execute_rule_in.
+  split.
+  * intros. repeat destruct H. destruct H0, H1.
+    apply tr_instantiateRuleOnPattern_in in H2.
+    destruct H2.
+    exists x, x0, x1.
+    crush.
+    exact tr.
+  * intros. repeat destruct H. destruct H0, H1, H2.
+    exists x, x0.
+    crush.
+    apply tr_instantiateRuleOnPattern_in.
+    exact tr.
+    exists x1.
+    crush.
+Qed.
+  
+Theorem tr_execute_element_in :
+      forall (tc: TransformationConfiguration) (ts: TransformationSyntax tc) (eng: TransformationEngine ts) 
+      (tr: Transformation) (sm : SourceModel) (te : TargetModelElement),
+      In te (allModelElements (execute tr sm)) <->
+      (exists (sp : list SourceModelElement) (r : Rule) (i: nat) (ope: OutputPatternElement),
+          In sp (allTuples tr sm) /\
+          In r (Transformation_getRules tr) /\
+          matchRuleOnPattern r sm sp = true /\
+          In i (seq 0 (evalIteratorExpr r sm sp)) /\
+          In ope (Rule_getOutputPatternElements r) /\ 
+          instantiateElementOnPattern ope sm sp i = Some te).
+Proof.
+  intros.
+  rewrite tr_execute_iteration_in.
+  split.
+  * intros. repeat destruct H. destruct H0, H1, H2.
+    apply tr_instantiateIterationOnPattern_in in H3.
+    destruct H3.
+    exists x, x0, x1, x2.
+    crush.
+  * intros. repeat destruct H. destruct H0, H1, H2, H3.
+    exists x, x0, x1.
+    crush.
+    apply tr_instantiateIterationOnPattern_in.
+    exists x2.
+    crush.
+Qed.
+
+Theorem tr_execute_element_leaf :
+      forall (tc: TransformationConfiguration) (ts: TransformationSyntax tc) (eng: TransformationEngine ts) 
+      (tr: Transformation) (sm : SourceModel) (te : TargetModelElement),
+      In te (allModelElements (execute tr sm)) <->
+      (exists (sp : list SourceModelElement) (r : Rule) (i: nat) (ope: OutputPatternElement),
+          In sp (allTuples tr sm) /\
+          In r (Transformation_getRules tr) /\
+          evalGuardExpr r sm sp = Some true /\
+          In i (seq 0 (evalIteratorExpr r sm sp)) /\
+          In ope (Rule_getOutputPatternElements r) /\ 
+          evalOutputPatternElementExpr sm sp i ope = Some te).
+Proof.
+  intros.
+  rewrite tr_execute_element_in.
+  split.
+  * intros. repeat destruct H. destruct H0, H1, H2, H3.
+    rewrite tr_matchRuleOnPattern_leaf in H1. 
+    rewrite tr_instantiateElementOnPattern_leaf in H4.
+    exists x, x0, x1, x2.
+    destruct (evalGuardExpr x0 sm x). destruct b.
+    crush. crush. crush. crush.
+  * intros. repeat destruct H. destruct H0, H1, H2, H3.
+    exists x, x0, x1, x2.
+    crush.
+    rewrite tr_matchRuleOnPattern_leaf.
+    destruct (evalGuardExpr x0 sm x). destruct b.
+    crush. crush. crush. crush.
+    rewrite tr_instantiateElementOnPattern_leaf.
+    crush.
+Qed.
+
+(* TODO: similar for links *)
