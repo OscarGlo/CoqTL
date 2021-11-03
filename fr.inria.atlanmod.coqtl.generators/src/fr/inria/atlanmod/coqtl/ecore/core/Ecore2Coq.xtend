@@ -313,15 +313,15 @@ class Ecore2Coq {
 		    eq_b := beq_«mm_eobject»;
 		}.
 
-		Instance «mm»_«Keywords.MetamodelTypeClassName»_instance : 
+		Instance «mm»_«Keywords.MetamodelTypeClassName»_Instance : 
 			«Keywords.MetamodelTypeClassName» :=
 		{
 			ModelElement := «mm_eobject»;
 			ModelLink := «mm_elink»;
 		}.
 		
-		Instance «mm»_«Keywords.ModelingMetamodelTypeClassName»_instance : 
-			«Keywords.ModelingMetamodelTypeClassName» «mm»_«Keywords.MetamodelTypeClassName»_instance :=
+		Instance «mm»_«Keywords.ModelingMetamodelTypeClassName»_Instance : 
+			«Keywords.ModelingMetamodelTypeClassName» «mm»_«Keywords.MetamodelTypeClassName»_Instance :=
 		{ 
 		    elements := «mm»_«Keywords.ElementSum»;
 		    links := «mm»_«Keywords.LinkSum»; 

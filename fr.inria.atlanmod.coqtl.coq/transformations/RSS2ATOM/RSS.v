@@ -919,15 +919,15 @@ Instance RSSMetamodel_EqDec : EqDec RSSMetamodel_Object := {
     eq_b := beq_RSSMetamodel_Object;
 }.
 
-Instance RSSMetamodel_Metamodel_instance : 
+Instance RSSMetamodel_Metamodel_Instance : 
 	Metamodel :=
 {
 	ModelElement := RSSMetamodel_Object;
 	ModelLink := RSSMetamodel_Link;
 }.
 
-Instance RSSMetamodel_ModelingMetamodel_instance : 
-	ModelingMetamodel RSSMetamodel_Metamodel_instance :=
+Instance RSSMetamodel_ModelingMetamodel_Instance : 
+	ModelingMetamodel RSSMetamodel_Metamodel_Instance :=
 { 
     elements := RSSMetamodel_ElementSum;
     links := RSSMetamodel_LinkSum; 
