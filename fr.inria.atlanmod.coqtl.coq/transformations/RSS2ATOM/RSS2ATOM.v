@@ -17,14 +17,13 @@ Require Import RSS2ATOM.RSS.
 Require Import core.TransformationConfiguration.
 Require Import core.modeling.ModelingTransformationConfiguration.
 
-Open Scope coqtl.
 Instance R2AConfiguration : TransformationConfiguration := 
-  Build_TransformationConfiguration RSSMetamodel_Metamodel_instance ATOMMetamodel_Metamodel_instance.
+  Build_TransformationConfiguration RSSMetamodel_Metamodel_Instance ATOMMetamodel_Metamodel_Instance.
 
 Instance RSS2ATOMConfiguration : ModelingTransformationConfiguration R2AConfiguration :=
- Build_ModelingTransformationConfiguration R2AConfiguration RSSMetamodel_ModelingMetamodel_instance ATOMMetamodel_ModelingMetamodel_instance.
+ Build_ModelingTransformationConfiguration R2AConfiguration RSSMetamodel_ModelingMetamodel_Instance ATOMMetamodel_ModelingMetamodel_Instance.
 
-Check elem.
+Open Scope coqtl.
 
 Definition RSS2ATOM :=
   transformation [
@@ -93,5 +92,4 @@ Definition RSS2ATOM :=
       nil
     ]
   ].
-
 Close Scope coqtl.
