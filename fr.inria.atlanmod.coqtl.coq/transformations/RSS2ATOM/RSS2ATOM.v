@@ -47,7 +47,7 @@ Definition RSS2ATOM :=
             maybeResolveAll tls m "cat" ATOM.CategoryClass
               (maybeSingleton (maybeSingleton (Channel_getCategoryObject c m)))
           )
-        );
+        )(*;
         (* TODO *)
         (* links <- Sequence{link}.first() *)
         (fun tls i m c a =>
@@ -55,7 +55,7 @@ Definition RSS2ATOM :=
             resolveAll tls m "link" ATOMLinks
               (singleton (singleton (Channel_getLink c)))
           ))
-        )(*;
+        );
         (* authors <- Sequence{auth}.first() *)
         (fun tls i m c a =>
           maybeBuildATOMAuthors a (
