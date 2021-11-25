@@ -27,3 +27,19 @@ Definition TargetModel_incl {tc: TransformationConfiguration}  (m1 m2: TargetMod
 Definition monotonicity (tc: TransformationConfiguration) (t: Transformation) :=
   forall (sm1 sm2: SourceModel),
   SourceModel_incl sm1 sm2 -> TargetModel_incl (execute t sm1) (execute t sm2).
+
+Theorem monotonicity_lifting :
+  forall (tc: TransformationConfiguration) 
+  (sm: SourceModel) (tr: Transformation),
+    Forall 
+      (fun r => monotonicity tc (buildTransformation (Transformation_getArity tr) [ r ]))
+      (Transformation_getRules tr) 
+        -> monotonicity tc tr.
+Proof.
+  unfold monotonicity.
+  intros.
+  rewrite Forall_forall in H.
+  unfold execute.
+  unfold TargetModel_incl.
+  split.
+Abort.

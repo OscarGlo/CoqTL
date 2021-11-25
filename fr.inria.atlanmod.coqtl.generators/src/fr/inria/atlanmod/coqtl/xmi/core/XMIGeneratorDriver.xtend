@@ -7,7 +7,7 @@ import java.io.File
 
 class XMIGeneratorDriver {
 	
-	def static doGeneration(URI mm_path, URI model, URI output_uri, String exname, String mmname){
+	def static doGeneration(URI mm_path, URI model, URI output_uri, String exname, String mmname, String filename){
 		
 		val resource_set = EMFUtil.loadEcore(mm_path)
 		val resource = resource_set.getResource(model, true)
@@ -15,9 +15,15 @@ class XMIGeneratorDriver {
 		var content = ""
 		val compiler = new XMI2Coq
 		
-		content += compiler.mapEObjects(resource.contents, exname, mmname)	
+		content += compiler.mapEObjects(resource.contents, exname, mmname, filename)	
 		
 		URIUtil.write(output_uri, content)
+	}
+	
+	
+	def static getFileName(URI m_path, int level){
+		var f = m_path.trimFileExtension().segment(level)
+		return f.toString
 	}
 	
 	def static void main(String[] args) {
@@ -49,11 +55,11 @@ class XMIGeneratorDriver {
 		val mm_uri = URI.createFileURI(mm_path)
 		val output_uri = URI.createFileURI(output_path);
 		
-		val f = new File(mm_path);
-		val exname = f.getParentFile().getName()
-		val mmname = f.getName().substring(0, f.getName().length() - 6)
-
-        doGeneration(mm_uri, m_uri, output_uri, exname, mmname)
+		val exname = getFileName(mm_uri, mm_uri.segmentCount-2)
+		val mmname = getFileName(mm_uri, mm_uri.segmentCount-1)
+		val filename = getFileName(m_uri, m_uri.segmentCount-1)
+		
+        doGeneration(mm_uri, m_uri, output_uri, exname, mmname, filename)
 
     }
 	

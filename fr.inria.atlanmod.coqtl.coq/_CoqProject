@@ -14,6 +14,7 @@ core/utils/PrintUtils.v
 core/utils/PropUtils.v
 core/utils/StringUtils.v
 core/utils/TupleUtils.v
+core/utils/OptionUtils.v
 core/utils/Utils.v
 
 core/Expressions.v
@@ -35,7 +36,7 @@ core/properties/AdditivityElement.v
 core/properties/AdditivityLink.v
 core/properties/Universality.v
 core/properties/Confluence.v
-core/properties/TransformationProperties.v
+core/properties/Monotonicity.v
 #core/properties/Lifting.v
 
 core/modeling/ModelingMetamodel.v
@@ -86,6 +87,28 @@ transformations/RSS2ATOM/RSS.v
 transformations/RSS2ATOM/ATOM.v
 transformations/RSS2ATOM/ATOMFlattened.v
 transformations/RSS2ATOM/RSS2ATOM.v
+<<<<<<< HEAD
 
 transformations/DBLP/DBLP.v
 transformations/IMDB/MOVIES.v
+=======
+transformations/RSS2ATOM/tests/ExempleRSS.v
+transformations/RSS2ATOM/tests/Exemple1RSS.v
+transformations/RSS2ATOM/tests/ExempleATOM.v
+transformations/RSS2ATOM/tests/Exemple1ATOM.v
+
+transformations/DBLP/DBLP.v
+transformations/IMDB/MOVIES.v
+
+core/test/iExpressions.v
+core/test/iSyntax.v
+core/test/iSemantics.v
+core/test/iSyntaxCertification.v
+#core/test/iCertification.v
+core/test/properties/iConfluence.v
+
+transformations/Families2Persons/tests/sampleFamilies.v
+transformations/Families2Persons/Families.v
+transformations/Families2Persons/Persons.v
+transformations/Families2Persons/Families2Persons.v
+>>>>>>> 7f3b818f993057e5b8d33591b3ea604eef260c5f

@@ -26,6 +26,7 @@ Instance RSS2ATOMConfiguration : ModelingTransformationConfiguration R2AConfigur
 Open Scope coqtl.
 
 Definition RSS2ATOM :=
+<<<<<<< HEAD
   transformation [
     rule "Channel2ATOM"
     from [ChannelClass]
@@ -92,3 +93,8 @@ Definition RSS2ATOM :=
     ]
   ].
 Close Scope coqtl.
+=======
+  transformation nil.
+
+Close Scope coqtl.
+>>>>>>> 7f3b818f993057e5b8d33591b3ea604eef260c5f

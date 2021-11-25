@@ -8,13 +8,16 @@ Require Import Bool.
 Require Import core.utils.Utils.
 Require Import core.Model.
 Require Import core.Engine.
-Require Import core.Syntax.
-Require Import core.Semantics.
+
+Require Import core.test.iSyntax.
+Require Import core.test.iSemantics.
+Require Import core.test.iSyntaxCertification.
+Require Import core.test.iExpressions.
 Require Import core.EqDec.
 Require Import core.Metamodel.
 Require Import core.TransformationConfiguration.
-Require Import core.SyntaxCertification.
-Require Import core.Expressions.
+
+
 
 Section Certification.
 
@@ -178,10 +181,10 @@ Lemma tr_applyElementOnPattern_leaf :
 forall (tr: Transformation) (sm : SourceModel) (sp: list SourceModelElement) (te: TargetModelElement) 
        (i:nat) (ope: OutputPatternElement),
   evalOutputPatternElementExpr sm sp i ope = Some te ->
-  applyElementOnPattern ope tr sm sp i = optionListToList (evalOutputPatternLinkExpr sm sp te i (trace tr sm) ope).
+  applyElementOnPattern ope tr sm sp i = optionListToList (evalOutputPatternLinkExpr sm sp te (OutputPatternElement_getResolve ope) i ope).
 Proof.
   intros.
-  destruct (evalOutputPatternLinkExpr sm sp te i (trace tr sm) ope) eqn:dst.
+  destruct (evalOutputPatternLinkExpr sm sp te (OutputPatternElement_getResolve ope) i ope) eqn:dst.
   * unfold applyElementOnPattern. crush.
   * unfold applyElementOnPattern. crush.
 Qed.  
@@ -212,20 +215,6 @@ Proof.
   apply tuples_up_to_n_incl_length with (n:=maxArity tr) in H.
   - assumption.
   - assumption.
-Qed.
-
-
-Lemma allTuples_not_incl_length:
-  forall (sp : list SourceModelElement) (tr: Transformation) (sm: SourceModel), 
-  length sp > maxArity tr -> not (In sp (allTuples tr sm)).
-Proof.
-intros sp tr sm c.
-apply Gt.gt_not_le in c.
-revert c.
-apply contraposition.
-unfold allTuples.
-specialize (tuple_length sp (allModelElements sm) (maxArity tr)).
-crush.
 Qed.
 
 (** * Resolve *)
@@ -282,7 +271,7 @@ Qed.
 (* this one direction, the other one is not true since exists cannot gurantee uniqueness in find *)
 Theorem tr_resolveIter_leaf: 
   forall (tls:list TraceLink) (sm : SourceModel) (name: string)
-    (sp: list SourceModelElement) (iter: nat) (x: TargetModelElement),
+    (sp: list TransformationConfiguration.SourceModelElement) (iter: nat) (x: TargetModelElement),
     resolveIter tls sm name sp iter = return x ->
       (exists (tl : TraceLink),
         In tl tls /\
@@ -293,21 +282,24 @@ Theorem tr_resolveIter_leaf:
 Proof.
 intros.
 unfold resolveIter in H.
-destruct (find (fun tl: TraceLink => 
-(Semantics.list_beq TransformationConfiguration.SourceModelElement SourceElement_eqb (@TraceLink_getSourcePattern tc tl) sp) &&
-((TraceLink_getIterator tl) =? iter) &&
-((TraceLink_getName tl) =? name)%string) tls) eqn: find_ca.
+destruct (find
+      (fun tl : TraceLink =>
+       iSemantics.list_beq
+         TransformationConfiguration.SourceModelElement
+         SourceElement_eqb (TraceLink_getSourcePattern tl) sp &&
+       (TraceLink_getIterator tl =? iter) &&
+       (TraceLink_getName tl =? name)%string) tls) eqn: find_ca.
 - exists t.
-  apply find_some in find_ca.
-  destruct find_ca.
-  symmetry in H1.
-  apply andb_true_eq in H1.
-  destruct H1.
-  apply andb_true_eq in H1.
-  destruct H1.
-  crush.
-  -- apply beq_nat_true. crush.
-  -- apply String.eqb_eq. crush.
+apply find_some in find_ca.
+destruct find_ca.
+symmetry in H1.
+apply andb_true_eq in H1.
+destruct H1.
+apply andb_true_eq in H1.
+destruct H1.
+crush.
+-- apply beq_nat_true. crush.
+-- apply String.eqb_eq. crush.
 - inversion H.
 Qed.
 
