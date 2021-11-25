@@ -88,7 +88,6 @@ Definition RSS2ATOM :=
         (Category_getDomain c)
         (Category_getValue c)
       )
-      (* TODO *)
       nil
     ]
   ].
