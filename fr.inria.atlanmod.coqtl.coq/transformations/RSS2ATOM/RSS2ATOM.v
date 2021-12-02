@@ -4,6 +4,7 @@ Require Import Multiset.
 Require Import ListSet.
 
 Require Import core.utils.Utils.
+Require Import core.utils.ListUtils.
 
 Require Import core.modeling.ConcreteSyntax.
 Require Import core.modeling.ModelingSemantics.
@@ -23,48 +24,66 @@ Instance R2AConfiguration : TransformationConfiguration :=
 Instance RSS2ATOMConfiguration : ModelingTransformationConfiguration R2AConfiguration :=
  Build_ModelingTransformationConfiguration R2AConfiguration RSSMetamodel_ModelingMetamodel_Instance ATOMMetamodel_ModelingMetamodel_Instance.
 
+Definition getOrElse {T: Type} (o: option T) (def: T): T := match o with
+  | Some t => t
+  | None => def
+end.
+
+Definition getItemsAuthor (items: option (list Item)) := match items with
+  | Some items =>
+  match (head items) with
+    | Some item =>
+    match (Item_getAuthor item) with
+      | Some author => Some (BuildAuthor (BuildPerson author None None))
+      | None => None
+    end
+    | None => None
+  end
+  | None => None
+end.
+
 Open Scope coqtl.
 
 Definition RSS2ATOM :=
-<<<<<<< HEAD
   transformation [
     rule "Channel2ATOM"
     from [ChannelClass]
     to [elem [ChannelClass] ATOMClass "atom"
       (fun i m c => BuildATOM
         (Channel_getTitle c)
-        "#index"
-        (Channel_getDescription c)
+        ""
+        (Some (Channel_getDescription c))
         (Channel_getCopyright c)
-        "#icon"
-        "#logo"
-        (Channel_getLastBuildDate c)
+        None
+        None
+        (getOrElse (Channel_getLastBuildDate c) ""%string)
       )
       [
         (* categories <- At.category->asSet() *)
         link [ChannelClass] ATOMClass ATOMCategoriesReference
         (fun tls i m c a =>
           maybeBuildATOMCategories a (
-            maybeResolveAll tls m "cat" ATOM.CategoryClass
-              (maybeSingleton (maybeSingleton (Channel_getCategoryObject c m)))
-          )
-        )(*;
-        (* TODO *)
-        (* links <- Sequence{link}.first() *)
-        (fun tls i m c a =>
-          Some (buildATOMLinks a (
-            resolveAll tls m "link" ATOMLinks
-              (singleton (singleton (Channel_getLink c)))
-          ))
-        );
-        (* authors <- Sequence{auth}.first() *)
-        (fun tls i m c a =>
-          maybeBuildATOMAuthors a (
-            (maybeResolveAll tls m "auth" ATOMAuthors
-              (maybeSingleton (BuildATOMAuthors a (BuildAuthor)))
+            maybeResolveAll tls m "cat" ATOM.CategoryClass (
+              maybeSingleton (maybeSingleton (
+                Channel_getCategoryObject c m
+              ))
             )
           )
-        ) *)
+        );
+        (* links <- Sequence{link}.first() *)
+        link [ChannelClass] ATOMClass ATOMLinksReference
+        (fun tls i m c a =>
+          maybeBuildATOMLinks a (
+            Some [BuildLink None (Channel_getLink c) None None None None]
+          )
+        );
+        (* authors <- Sequence{auth}.first() *)
+        link [ChannelClass] ATOMClass ATOMAuthorsReference
+        (fun tls i m c a =>
+          maybeBuildATOMAuthors a (
+            maybeSingleton (getItemsAuthor (Channel_getItems c m))
+          )
+        )
       ]
     ];
     rule "Item2Entry"
@@ -72,29 +91,31 @@ Definition RSS2ATOM :=
     to [elem [ItemClass] EntryClass "entry"
       (fun i m it => BuildEntry
         (Item_getTitle it)
-        (Item_getGuid it)
-        "#rights"
+        (getOrElse (Item_getGuid it) ""%string)
+        None
         (Item_getComments it)
         (Item_getPubDate it)
-        "#lastUpdate"
+        ""
       )
-      (* TODO *)
-      nil
+      [
+        (* links <- Sequence{link}.first() *)
+        link [ItemClass] EntryClass EntryLinksReference
+        (fun tls i m i e =>
+          maybeBuildEntryLinks e (
+            Some [BuildLink None (Some (Item_getLink i)) None None None None]
+          )
+        ) 
+      ]
     ];
     rule "Category2Category"
     from [RSS.CategoryClass]
     to [elem [RSS.CategoryClass] ATOM.CategoryClass "cat"
       (fun i m c => ATOM.BuildCategory
-        "#term"
-        (Category_getDomain c)
-        (Category_getValue c)
+        ""
+        (Some (Category_getDomain c))
+        (Some (Category_getValue c))
       )
       nil
     ]
   ].
 Close Scope coqtl.
-=======
-  transformation nil.
-
-Close Scope coqtl.
->>>>>>> 7f3b818f993057e5b8d33591b3ea604eef260c5f
